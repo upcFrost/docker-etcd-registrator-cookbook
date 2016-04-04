@@ -19,11 +19,3 @@ include_recipe 'git'
 nodejs_npm 'docker-etcd-registrator' do
   url 'git://github.com/psi-4ward/docker-etcd-registrator.git'
 end
-
-# Copy the OCF script
-cookbook_file '/usr/lib/ocf/resource.d/pacemaker/docker-etcd-registrator' do
-  owner 'root'
-  group 'root'
-  mode '0777'
-  source 'docker-etcd-registrator'
-end
