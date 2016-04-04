@@ -1,23 +1,16 @@
 docker-etcd-registrator Cookbook
 ================================
-TODO: Enter the cookbook description here.
-
-e.g.
-This cookbook makes your favorite breakfast sandwich.
+Chef cookbook for the docker-etcd-registrator for Vulcand made by @psi-4ward.
 
 Requirements
 ------------
-TODO: List your cookbook requirements. Be sure to include any requirements this cookbook has on platforms, libraries, other cookbooks, packages, operating systems, etc.
-
-e.g.
-#### packages
-- `toaster` - docker-etcd-registrator needs toaster to brown your bagel.
+- `git` - pulls the fresh version from git since the npm published one is outdated
+- `nodejs`
 
 Attributes
 ----------
-TODO: List your cookbook attributes here.
+TODO: At the moment only the install part is done
 
-e.g.
 #### docker-etcd-registrator::default
 <table>
   <tr>
@@ -37,10 +30,8 @@ e.g.
 Usage
 -----
 #### docker-etcd-registrator::default
-TODO: Write usage instructions for each cookbook.
-
-e.g.
-Just include `docker-etcd-registrator` in your node's `run_list`:
+Installs the registrator
+Include `docker-etcd-registrator` in your node's `run_list`:
 
 ```json
 {
@@ -53,9 +44,6 @@ Just include `docker-etcd-registrator` in your node's `run_list`:
 
 Contributing
 ------------
-TODO: (optional) If this is a public cookbook, detail the process for contributing. If this is a private cookbook, remove this section.
-
-e.g.
 1. Fork the repository on Github
 2. Create a named feature branch (like `add_component_x`)
 3. Write your change
@@ -65,4 +53,5 @@ e.g.
 
 License and Authors
 -------------------
-Authors: TODO: List authors
+Authors: 
+Petr Belyaev <upcfrost@gmail.com>
