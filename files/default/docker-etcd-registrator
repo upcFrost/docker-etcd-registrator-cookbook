@@ -1,0 +1,249 @@
+#!/bin/sh
+#
+#
+#       Docker-etcd-registrator OCF script for pacemaker.
+#
+# Copyright (c) 2016 upcFrost
+# Adopted from Christoph Wiechert <https://github.com/psi-4ward>
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of version 2 of the GNU General Public License as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it would be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+#
+# Further, this software is distributed without any warranty that it is
+# free of the rightful claim of any third person regarding infringement
+# or the like.  Any license provided herein, whether implied or
+# otherwise, applies only to this software file.  Patent licenses, if
+# any, provided herein do not apply to combinations of this program with
+# other software, or any other product whatsoever.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write the Free Software Foundation,
+# Inc., 59 Temple Place - Suite 330, Boston MA 02111-1307, USA.
+#
+
+#######################################################################
+# Initialization:
+
+: ${OCF_FUNCTIONS=${OCF_ROOT}/resource.d/heartbeat/.ocf-shellfuncs}
+. ${OCF_FUNCTIONS}
+: ${__OCF_ACTION=$1}
+
+#######################################################################
+
+meta_data() {
+        cat <<END
+<?xml version="1.0"?>
+<!DOCTYPE resource-agent SYSTEM "ra-api-1.dtd">
+<resource-agent name="docker-etcd-registrator" version="0.1">
+  <version>0.1</version>
+  <shortdesc lang="en">docker-etcd-registrator resource agent</shortdesc>
+  <parameters>
+    <parameter name="hostname" unique="1">
+      <longdesc lang="en">Hostname of the system</longdesc>
+      <content type="string" />
+      <shortdesc lang="en">Hostname</shortdesc>
+      <content type="string" />
+    </parameter>
+    <parameter name="register">
+      <longdesc lang="en">Register only Ports which binds to the host interface (docker -p). If set to public, binds ports either to the IP privided for binding, or to the REGISTER_PUBLIC_IP specified</longdesc>
+      <shortdesc lang="en">Type of ports to be registered</shortdesc>
+      <content type="string" default="public" />
+    </parameter>
+    <parameter name="register_public_ip">
+      <longdesc lang="en">IP if Hostbinding dont specify any (docker -p 80:80 instead of docker -p 10.0.1.1:80:80)</longdesc>
+      <shortdesc lang="en">Default binding IP</shortdesc>
+      <content type="string" default="10.0.1.1"/>
+    </parameter>
+    <parameter name="skydns_etcd_prefix">
+      <longdesc lang="en">Etcd prefix for SkyDNS records</longdesc>
+      <shortdesc lang="en">Etcd SkyDNS prefix</shortdesc>
+      <content type="string" default="/skydns/local/skydns" />
+    </parameter>
+    <parameter name="vulcand_etcd_prefix" unique="0">
+      <longdesc lang="en">Etcd prefix for SkyDNS records</longdesc>
+      <shortdesc lang="en">Vulcand Etcd prefix</shortdesc>
+      <content type="string" default="/vulcand" />
+    </parameter>
+    <parameter name="docker_host" unique="0">
+      <longdesc lang="en">Port or socker for Docker communication</longdesc>
+      <shortdesc lang="en">Docker port/socker</shortdesc>
+      <content type="string" default="/var/run/docker.sock" />
+    </parameter>
+    <parameter name="docker_tls_verify" unique="0">
+      <longdesc lang="en">DOCKER_TLS_VERIFY from docker-modem</longdesc>
+      <shortdesc lang="en">DOCKER_TLS_VERIFY from docker-modem</shortdesc>
+      <content type="string" />
+    </parameter>
+    <parameter name="docker_cert_path" unique="0">
+      <longdesc lang="en">Directory containing docker's ca.pem, cert.pem, key.pem (filenames hardcoded) </longdesc>
+      <shortdesc lang="en">Docker's certificates path</shortdesc>
+      <content type="string" />
+    </parameter>
+    <parameter name="etcd_endpoints" unique="0" required="1">
+      <longdesc lang="en">Etcd endpoints URLs</longdesc>
+      <shortdesc lang="en">Etcd endpoints URLs</shortdesc>
+      <content type="string" default="http://127.0.0.1:4001" />
+    </parameter>
+    <parameter name="etcd_cafile" unique="0">
+      <longdesc lang="en">Etcd CA file path</longdesc>
+      <shortdesc lang="en">Etcd CA file path</shortdesc>
+      <content type="string" />
+    </parameter>
+    <parameter name="etcd_certfile" unique="0">
+      <longdesc lang="en">Etcd cert file path</longdesc>
+      <shortdesc lang="en">Etcd CA file path</shortdesc>
+      <content type="string" />
+    </parameter>
+    <parameter name="etcd_keyfile" unique="0">
+      <longdesc lang="en">Etcd certificate key file path</longdesc>
+      <shortdesc lang="en">Etcd key file path</shortdesc>
+      <content type="string" />
+    </parameter>
+  </parameters>
+  <actions>
+    <action name="start" timeout="60" />
+    <action name="stop" timeout="60" />
+    <action name="restart" timeout="60" />
+    <action name="monitor" timeout="30" />
+    <action name="meta-data" timeout="5" />
+  </actions>
+</resource-agent>
+END
+}
+
+#######################################################################
+
+prog="docker-etcd-registrator"
+user="hacluster"
+group="haclient"
+exec="/usr/bin/$prog"
+pidfile="/var/run/$prog.pid"
+lockfile="/var/lock/subsys/$prog"
+logfile="/var/log/cluster/$prog"
+
+docker_etcd_registrator_usage() {
+        cat <<END
+usage: $0 {start|stop|monitor|meta-data}
+END
+}
+
+docker_etcd_registrator_unsupported() {
+        ocf_log info "This pacemaker version does not support the ocf:pacemaker:docker_etcd_registrator agent"
+        return $OCF_ERR_GENERIC
+}
+
+Docker_etcd_registrator_start() {
+    umask 077
+    touch $logfile $pidfile
+    chown $user:$group $logfile $pidfile
+    if [ ! -f $exec ]; then
+        echo "$exec: File does not exist" > $logfie && exit 5
+    fi
+    if [ ! -x $exec ]; then
+        echo "$exec: File cannot be executed" > $logfie && exit 5
+    fi
+
+    echo "Starting $prog: " > $logfile
+
+    export "DEBUG=*"
+    if [ -n "$OCF_RESKEY_hostname" ]; then
+            export HOSTNAME="$OCF_RESKEY_hostname"
+    else
+            export HOSTNAME=`hostname`
+    fi
+    if [ -n "$OCF_RESKEY_register" ]; then
+            export REGISTER="$OCF_RESKEY_register"
+    fi
+    if [ -n "$OCF_RESKEY_register_public_ip" ]; then
+            export REGISTER_PUBLIC_IP="$OCF_RESKEY_register_public_ip"
+    else
+            export REGISTER_PUBLIC_IP=$(cat /etc/hosts | grep `hostname` | cut -f 1 -d " ")
+    fi
+    if [ -n "$OCF_RESKEY_skydns_etcd_prefix" ]; then
+            export SKYDNS_ETCD_PREFIX="$OCF_RESKEY_skydns_etcd_prefix"
+    else
+            export SKYDNS_ETCD_PREFIX="/skydns"
+    fi
+    if [ -n "$OCF_RESKEY_vulcand_etcd_prefix" ]; then
+            export VULCAND_ETCD_PREFIX="$OCF_RESKEY_vulcand_etcd_prefix"
+    else
+            export VULCAND_ETCD_PREFIX="/vulcand"
+    fi
+    if [ -n "$OCF_RESKEY_docker_host" ]; then
+            export DOCKER_HOST="$OCF_RESKEY_docker_host"
+    fi
+    if [ -n "$OCF_RESKEY_docker_tls_verify" ]; then
+            export DOCKER_TLS_VERIFY="$OCF_RESKEY_docker_tls_verify"
+    fi
+    if [ -n "$OCF_RESKEY_docker_cert_path" ]; then
+            export DOCKER_CERT_PATH="$OCF_RESKEY_docker_cert_path"
+    fi
+    if [ -n "$OCF_RESKEY_etcd_endpoints" ]; then
+            export ETCD_ENDPOINTS="$OCF_RESKEY_etcd_endpoints"
+    fi
+    if [ -n "$OCF_RESKEY_etcd_cafile" ]; then
+            export ETCD_CAFILE="$OCF_RESKEY_etcd_cafile"
+    fi
+    if [ -n "$OCF_RESKEY_etcd_certfile" ]; then
+            export ETCD_CERTFILE="$OCF_RESKEY_etcd_certfile"
+    fi
+    if [ -n "$OCF_RESKEY_etcd_keyfile" ]; then
+            export ETCD_KEYFILE="$OCF_RESKEY_etcd_keyfile"
+    fi
+
+    printf "\n\nStarting with env: " >> $logfile
+    env >> $logfile
+    printf "\n\n"
+
+
+    ( $exec & echo $! > $pidfile ) >> $logfile 2>> $logfile &
+
+    sleep 1
+    Docker_etcd_registrator_monitor
+    return  $?
+}
+
+Docker_etcd_registrator_stop() {
+    echo "Stopping $prog" >> $logfile
+    PID=`cat $pidfile`
+    ocf_stop_processes SIGINT 1 $PID
+    return $?
+}
+
+Docker_etcd_registrator_monitor() {
+    ocf_pidfile_status $pidfile
+    if [ $? -eq 0 ]; then
+        return $OCF_SUCCESS
+    fi
+    return $OCF_NOT_RUNNING
+}
+
+Docker_etcd_registrator_restart() {
+    Docker_etcd_registrator_stop
+    Docker_etcd_registrator_start
+    return $?
+}
+
+case $__OCF_ACTION in
+meta-data)      meta_data
+                exit $OCF_SUCCESS
+                ;;
+start)          Docker_etcd_registrator_start;;
+stop)           Docker_etcd_registrator_stop;;
+restart)        Docker_etcd_registrator_restart;;
+monitor)        Docker_etcd_registrator_monitor;;
+meta-data)      meta-data
+                exit $OCF_SUCCESS
+                ;;
+*)              docker_etcd_registrator_usage
+                exit $OCF_ERR_UNIMPLEMENTED
+                ;;
+esac
+rc=$?
+ocf_log debug "${OCF_RESOURCE_INSTANCE} $__OCF_ACTION : $rc"
+exit $rc
