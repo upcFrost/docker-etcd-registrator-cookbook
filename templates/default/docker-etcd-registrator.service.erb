@@ -1,0 +1,19 @@
+[Unit]
+Description=Docker Etcd Registrator for Vulcand
+After=network.target
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=notify
+EnvironmentFile=-/etc/docker-etcd-registrator/docker-etcd-registrator.conf
+<% if @config.run_user -%>
+User=<%= @config.run_user %>
+<% end -%>
+# set GOMAXPROCS to number of processors
+ExecStart=/bin/bash -c "GOMAXPROCS=$(nproc) <%= @config.docker_etcd_registrator_bin %>"
+Restart=on-failure
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
