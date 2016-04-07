@@ -23,112 +23,112 @@ TODO: At the moment only the install part is done
   <tr>
     <td><tt>['docker-etcd-registrator']['conf_dir']</tt></td>
     <td>String</td>
-    <td>`:conf_dir`</td>
+    <td><tt>:conf_dir</tt></td>
     <td>...</td>
     <td><tt>...</tt></td>
   </tr>
   <tr>
     <td><tt>['docker-etcd-registrator']['binary']</tt></td>
     <td>String</td>
-    <td>`:binary`</td>
+    <td><tt>:binary</tt></td>
     <td>...</td>
     <td><tt>...</tt></td>
   </tr>
   <tr>
     <td><tt>['docker-etcd-registrator']['run_user']</tt></td>
     <td>String</td>
-    <td>`:run_user`</td>
+    <td><tt>:run_user</tt></td>
     <td>...</td>
     <td><tt>...</tt></td>
   </tr>
   <tr>
     <td><tt>['docker-etcd-registrator']['hostname']</tt></td>
     <td>String</td>
-    <td>`:hostname`</td>
+    <td><tt>:hostname</tt></td>
     <td>...</td>
     <td><tt>...</tt></td>
   </tr>
   <tr>
     <td><tt>['docker-etcd-registrator']['register']</tt></td>
     <td>String</td>
-    <td>`:register`</td>
+    <td><tt>:register</tt></td>
     <td>...</td>
     <td><tt>...</tt></td>
   </tr>
   <tr>
     <td><tt>['docker-etcd-registrator']['register_public_ip']</tt></td>
     <td>String</td>
-    <td>`:register_public_ip`</td>
+    <td><tt>:register_public_ip</tt></td>
     <td>...</td>
     <td><tt>...</tt></td>
   </tr>
   <tr>
     <td><tt>['docker-etcd-registrator']['force_public_ip']</tt></td>
     <td>String</td>
-    <td>`:force_public_ip`</td>
+    <td><tt>:force_public_ip</tt></td>
     <td>...</td>
     <td><tt>...</tt></td>
   </tr>
   <tr>
     <td><tt>['docker-etcd-registrator']['skydns_prefix']</tt></td>
     <td>String</td>
-    <td>`:skydns_prefix`</td>
+    <td><tt>:skydns_prefix</tt></td>
     <td>...</td>
     <td><tt>...</tt></td>
   </tr>
   <tr>
     <td><tt>['docker-etcd-registrator']['vulcand_prefix']</tt></td>
     <td>String</td>
-    <td>`:vulcand_prefix`</td>
+    <td><tt>:vulcand_prefix</tt></td>
     <td>...</td>
     <td><tt>...</tt></td>
   </tr>
   <tr>
     <td><tt>['docker-etcd-registrator']['docker_host']</tt></td>
     <td>String</td>
-    <td>`:docker_host`</td>
+    <td><tt>:docker_host</tt></td>
     <td>...</td>
     <td><tt>...</tt></td>
   </tr>
   <tr>
     <td><tt>['docker-etcd-registrator']['docker_tls_verify']</tt></td>
     <td>String</td>
-    <td>`:docker_tls_verify`</td>
+    <td><tt>:docker_tls_verify</tt></td>
     <td>...</td>
     <td><tt>...</tt></td>
   </tr>
   <tr>
     <td><tt>['docker-etcd-registrator']['docker_cert_path']</tt></td>
     <td>String</td>
-    <td>`:docker_cert_path`</td>
+    <td><tt>:docker_cert_path</tt></td>
     <td>...</td>
     <td><tt>...</tt></td>
   </tr>
   <tr>
     <td><tt>['docker-etcd-registrator']['etcd_endpoints']</tt></td>
     <td>String</td>
-    <td>`:etcd_endpoints`</td>
+    <td><tt>:etcd_endpoints</tt></td>
     <td>...</td>
     <td><tt>...</tt></td>
   </tr>
   <tr>
     <td><tt>['docker-etcd-registrator']['etcd_cafile']</tt></td>
     <td>String</td>
-    <td>`:etcd_cafile`</td>
+    <td><tt>:etcd_cafile</tt></td>
     <td>...</td>
     <td><tt>...</tt></td>
   </tr>
   <tr>
     <td><tt>['docker-etcd-registrator']['etcd_certfile']</tt></td>
     <td>String</td>
-    <td>`:etcd_certfile`</td>
+    <td><tt>:etcd_certfile</tt></td>
     <td>...</td>
     <td><tt>...</tt></td>
   </tr>
   <tr>
     <td><tt>['docker-etcd-registrator']['etcd_keyfile']</tt></td>
     <td>String</td>
-    <td>`:etcd_keyfile`</td>
+    <td><tt>:etcd_keyfile</tt></td>
     <td>...</td>
     <td><tt>...</tt></td>
   </tr>
@@ -138,21 +138,21 @@ Usage
 -----
 #### docker-etcd-registrator::default
 Installs the registrator
-Include `docker-etcd-registrator` in your node's `run_list`:
+Include <tt>docker-etcd-registrator` in your node's `run_list</tt>:
 
-```json
+<tt>`</tt>json
 {
   "name":"my_node",
   "run_list": [
     "recipe[docker-etcd-registrator]"
   ]
 }
-```
+<tt>`</tt>
 
 Contributing
 ------------
 1. Fork the repository on Github
-2. Create a named feature branch (like `add_component_x`)
+2. Create a named feature branch (like <tt>add_component_x</tt>)
 3. Write your change
 4. Write tests for your change (if applicable)
 5. Run the tests, ensuring they all pass
