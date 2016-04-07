@@ -20,7 +20,7 @@ include_recipe 'nodejs'
 # We can adjust PATH here also, but this way is imo better
 execute 'set_nodejs_prefix' do
   command 'npm config set prefix /usr/local'
-  action :nothing
+  action :run
 end
 
 # Check that git is installed

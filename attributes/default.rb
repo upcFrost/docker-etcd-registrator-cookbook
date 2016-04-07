@@ -12,6 +12,7 @@ default['docker-etcd-registrator']['run_user'] = nil
 default['docker-etcd-registrator']['hostname'] = nil
 default['docker-etcd-registrator']['register'] = nil
 default['docker-etcd-registrator']['register_public_ip'] = nil
+default['docker-etcd-registrator']['force_public_ip'] = nil
 default['docker-etcd-registrator']['skydns_prefix'] = nil
 default['docker-etcd-registrator']['vulcand_prefix'] = nil
 default['docker-etcd-registrator']['docker_host'] = nil
