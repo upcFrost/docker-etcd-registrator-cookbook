@@ -7,7 +7,7 @@
 
 default['docker-etcd-registrator']['conf_dir'] = '/etc/docker-etcd-registrator'
 default['docker-etcd-registrator']['binary'] = 'docker-etcd-registrator'
-default['docker-etcd-registrator']['run_user'] = nil
+default['docker-etcd-registrator']['run_user'] = 'root'
 
 default['docker-etcd-registrator']['hostname'] = nil
 default['docker-etcd-registrator']['register'] = nil
