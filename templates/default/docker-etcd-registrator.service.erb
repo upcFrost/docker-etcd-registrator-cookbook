@@ -1,11 +1,10 @@
 [Unit]
 Description=Docker Etcd Registrator for Vulcand
-After=network.target
-After=network-online.target
-Wants=network-online.target
+Requires=docker.service etcd.service
+After=docker.service etcd.service
 
 [Service]
-Type=notify
+Type=simple
 EnvironmentFile=-/etc/docker-etcd-registrator/docker-etcd-registrator.conf
 <% if @config.run_user -%>
 User=<%= @config.run_user %>

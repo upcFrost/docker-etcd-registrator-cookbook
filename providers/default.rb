@@ -12,10 +12,9 @@ action :create do
     group 'root'
     mode '0644'
     variables(
-      config: new_resource,
-      docker_etcd_registrator_bin: docker_etcd_registrator_bin
+      config: new_resource
     )
-    cookbook 'etcd'
+    cookbook 'docker-etcd-registrator'
     notifies :run, 'execute[systemctl daemon-reload]', :immediately
     action :create
   end
@@ -30,6 +29,11 @@ action :create do
     owner 'root'
     mode '0755'
     action :create
+  end
+  
+  execute 'systemctl daemon-reload' do
+    command '/bin/systemctl daemon-reload'
+    action :nothing
   end
 
   template "#{new_resource.conf_dir}/docker-etcd-registrator.conf" do

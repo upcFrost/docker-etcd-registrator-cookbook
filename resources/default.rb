@@ -5,6 +5,8 @@
 # Copyright 2016, Petr Belyaev <upcfrost@gmail.com>
 #
 
+default_action :create
+
 attribute :conf_dir, kind_of: String, default: node['docker-etcd-registrator']['conf_dir']
 attribute :docker_etcd_registrator_bin, kind_of: String, default: node['docker-etcd-registrator']['binary']
 attribute :run_user, kind_of: String, default: node['docker-etcd-registrator']['run_user']
