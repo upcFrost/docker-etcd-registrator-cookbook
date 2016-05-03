@@ -6,7 +6,7 @@
 #
 
 action :create do
-  template "/lib/systemd/system/docker-etcd-registrator.service" do
+  template '/lib/systemd/system/docker-etcd-registrator.service' do
     source 'docker-etcd-registrator.service.erb'
     owner 'root'
     group 'root'

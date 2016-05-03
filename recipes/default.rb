@@ -28,5 +28,5 @@ include_recipe 'git'
 
 # Install the service
 nodejs_npm 'docker-etcd-registrator' do
-  url 'git://github.com/psi-4ward/docker-etcd-registrator.git'
+  url 'https://github.com/psi-4ward/docker-etcd-registrator.git'
 end
