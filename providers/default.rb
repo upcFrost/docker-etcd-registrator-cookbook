@@ -4,6 +4,7 @@
 #
 # Copyright 2016, Petr Belyaev <upcfrost@gmail.com>
 #
+use_inline_resources
 
 action :create do
   template '/lib/systemd/system/docker-etcd-registrator.service' do
@@ -30,7 +31,7 @@ action :create do
     mode '0755'
     action :create
   end
-  
+
   execute 'systemctl daemon-reload' do
     command '/bin/systemctl daemon-reload'
     action :nothing
