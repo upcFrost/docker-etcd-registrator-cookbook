@@ -33,5 +33,6 @@ action :create do
   poise_service 'docker-etcd-registrator' do
     user new_resource.run_user
     command "/bin/bash -c 'GOMAXPROCS=$(nproc) #{new_resource.docker_etcd_registrator_bin}'"
+    options :systemd, after_target: 'docker'
   end
 end
