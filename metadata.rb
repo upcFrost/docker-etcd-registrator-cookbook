@@ -10,3 +10,4 @@ issues_url       'https://github.com/upcFrost/chef_corosync_cookbook/issues'
 
 depends 'nodejs'
 depends 'git'
+depends 'poise-service'

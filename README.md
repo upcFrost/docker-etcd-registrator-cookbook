@@ -6,6 +6,7 @@ Requirements
 ------------
 - `git` - pulls the fresh version from git since the npm published one is outdated
 - `nodejs`
+- `poise-service`
 
 Attributes
 ----------
